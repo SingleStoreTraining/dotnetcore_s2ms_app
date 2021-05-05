@@ -26,7 +26,7 @@ namespace mys2msapp.Controllers
         public IActionResult Register(string Username, string Email, string Password, string PasswordConfirmation){
             //*** REGISTRATION 1 ***
             //Check Email To See If It Already Exists - Retrieve a User Using the Provided Email
-            Dictionary<string, object> UserExist = DbConnector.Query($"WRITE QUERY HERE").FirstOrDefault();
+            Dictionary<string, object> UserExist = DbConnector.Query($"SELECT * FROM users WHERE email = '{Email}';").FirstOrDefault();
             if(UserExist == null){
                 if(Password != PasswordConfirmation){
                     ViewBag.RegError = "Passwords do not match!";
@@ -39,10 +39,10 @@ namespace mys2msapp.Controllers
                     } else {
                         //*** REGISTRATION 2 ***
                         // Create the New User
-                        DbConnector.Execute($"WRITE QUERY HERE");
+                        DbConnector.Execute($"INSERT INTO users (username, email, password) VALUES ('{Username}', '{Email}', '{PasswordConfirmation}' );");
                         // *** REGISTRATION 3 ***
                         //Set this user's id in session before redirecting
-                        Dictionary<string, object> CurrUser = DbConnector.Query($"WRITE QUERY HERE").FirstOrDefault();
+                        Dictionary<string, object> CurrUser = DbConnector.Query($"SELECT * FROM users WHERE email = '{Email}';").FirstOrDefault();
                         HttpContext.Session.SetInt32("SessionId", (int)(long)CurrUser["userId"]);
                         return RedirectToAction("Dashboard");
                     }
@@ -62,12 +62,12 @@ namespace mys2msapp.Controllers
             } else {
                 //*** DASHBOARD 1 ***
                 //Retrieve Current User
-                Dictionary<string, object> CurrUser = DbConnector.Query($"WRITE QUERY HERE").SingleOrDefault();
+                Dictionary<string, object> CurrUser = DbConnector.Query($"SELECT * FROM users WHERE userId = {CurrSessionId};").SingleOrDefault();
                 ViewBag.CurrUser = CurrUser;
             }
             //*** DASHBOARD 2 ***
             //Retrieve Current User's ToDos
-            ViewBag.AllToDos = DbConnector.Query($"WRITE QUERY HERE");
+            ViewBag.AllToDos = DbConnector.Query($"SELECT * FROM toDos WHERE userId = {CurrSessionId};");
             return View();
         }
 
@@ -76,7 +76,7 @@ namespace mys2msapp.Controllers
         public IActionResult Login(string Email, string PwToCheck){
             //*** LOGIN ***
             //Retrieve user with email
-            Dictionary<string, object> CurrUser = DbConnector.Query($"WRITE QUERY HERE").FirstOrDefault();
+            Dictionary<string, object> CurrUser = DbConnector.Query($"SELECT * FROM users WHERE email = '{Email}';").FirstOrDefault();
             if(CurrUser == null){
                 ViewBag.LogError = "This email has not been registered. Please register or try again!";
                 return View("Index");
@@ -108,7 +108,7 @@ namespace mys2msapp.Controllers
             } else {
                 //*** CREATE TODO ***
                 //Create New ToDo
-                DbConnector.Execute($"WRITE QUERY HERE");
+                DbConnector.Execute($"INSERT INTO toDos (title, description, userId) VALUES ('{Title}', '{Description}', {HttpContext.Session.GetInt32("SessionId")});");
             }
             return RedirectToAction("Dashboard");
         }
@@ -119,7 +119,7 @@ namespace mys2msapp.Controllers
         public IActionResult Delete(int TodoId){
             //*** DELETE TODO ***
             //Delete Todo
-            DbConnector.Execute($"WRITE QUERY HERE");
+            DbConnector.Execute($"DELETE FROM toDos WHERE toDosId = {TodoId};");
             return RedirectToAction("Dashboard");
         }
 
@@ -128,7 +128,7 @@ namespace mys2msapp.Controllers
         public IActionResult Edit(int TodoId){
             //*** EDIT TODO 1 ***
             //Retreive ToDo Using TodoId
-            Dictionary<string, object> CurrTodo = DbConnector.Query($"WRITE QUERY HERE").SingleOrDefault();
+            Dictionary<string, object> CurrTodo = DbConnector.Query($"SELECT * FROM toDos WHERE toDosId = {TodoId};").SingleOrDefault();
             ViewBag.CurrTodo = CurrTodo;
             return View();
         }
@@ -138,7 +138,7 @@ namespace mys2msapp.Controllers
         public IActionResult EditTodo(string Title, string Description, int TodoId){
             //*** EDIT TODO 2 ***
             //Update Todo
-            DbConnector.Execute($"WRITE QUERY HERE");
+            DbConnector.Execute($"UPDATE toDos SET title = '{Title}', description = '{Description}' WHERE toDosId = {TodoId};");
             return RedirectToAction("Dashboard");
         }
 
