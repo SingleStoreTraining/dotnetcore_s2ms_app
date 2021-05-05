@@ -1,0 +1,8 @@
+<h1>Edit Todo</h1> <a href="Dashboard">Back</a>
+
+<form action="/EditTodo" method="post">
+    Title: <input type="text" name="Title" value='@(@ViewBag.CurrToDo["title"])'><br>
+    Description: <br> <textarea name="Description" id="" cols="30" rows="8" >@ViewBag.CurrToDo["description"]</textarea><br>
+    <input type="hidden" name="TodoId" value='@(@ViewBag.CurrToDo["toDosId"])'>
+    <input type="submit" value="Edit ToDo" class="btn btn-success">
+</form><br><br><br><br>

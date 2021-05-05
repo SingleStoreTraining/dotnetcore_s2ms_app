@@ -1,0 +1,63 @@
+<div class="dash">
+<h1>SingleSpace Dashboard</h1> <a href="Logout">Log Out</a>
+<h3>Welcome, @ViewBag.CurrUser["username"]</h3>
+<br><br>
+
+<div class="post">
+    <h3>Let's Create some ToDos!</h3>
+    <form action="AddTodo" method="post" autocomplete="off">
+        Title: <input type="text" name="Title"><br>
+        Description: <br> <textarea name="Description" id="" cols="30" rows="8"></textarea><br>
+        <input type="submit" value="Add ToDo" class="btn btn-success">
+    </form><br><br><br><br>
+</div>
+
+<div class="all">
+    <h3>All ToDos:</h3>
+    @{
+        foreach(var todo in ViewBag.AllToDos){
+            <p><b>Title:</b> @todo["title"]</p>
+            <p><b>Description:</b> @todo["description"]</p>
+            <a href='@("Edit/" + @todo["toDosId"])'>Edit</a> <span> - </span> <a href='@("Delete/" + @todo["toDosId"])'>Delete</a>
+            <hr>
+        }
+    }
+</div>
+
+</div>
+
+<style>
+.dash{
+  width: 960px;
+  padding: 10px;
+}
+
+.dash h1{
+  display: inline-block;
+  margin-right: 400px;
+}
+
+.box {
+  display: inline-block;
+  vertical-align: top;
+  margin: 50px 50px;
+}
+
+.box label{
+  width: 140px;
+  text-align: right;
+}
+
+.post{
+  display: inline-block;
+  margin: 0px 60px;
+}
+
+.all{
+  display: inline-block;
+  vertical-align: top;
+  margin: 0px 60px;
+  width: 300px;
+}
+
+</style>
